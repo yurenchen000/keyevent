@@ -77,8 +77,9 @@ int key_event(struct input_event *ev) {
 
 int main(int argc, char *argv[])
 {
+	//---args
 	char *dev = "/dev/input/event3";
-	char *num = "3";
+	char *num = "2";
 
 	if(argc>1 && strcmp(argv[1],"-h") == 0) {
 		printf("usage: %s [dev_path] [workspace_num]\n\n", argv[0]);
@@ -95,6 +96,7 @@ int main(int argc, char *argv[])
 
 
 
+	//---main
 	int fd = -1;
 	size_t rb;
 
