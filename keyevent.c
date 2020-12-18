@@ -31,8 +31,20 @@ key is release, value = 0, code = 106
 
 int st_ctrl = 0;
 int st_alt  = 0;
-char cmd[256];
+char cmd_l[256];
+char cmd_r[256];
 
+
+// system("xdotool key --window 0 'ctrl+alt+Left'");
+// system("xdotool set_desktop 1");
+// system("xdotool set_desktop --relative -- -1");
+// system("[ \"`xdotool get_desktop`\" == 2 ] && xdotool set_desktop --relative -- -1");
+// system("/usr/bin/test \"`xdotool get_desktop`\" == 2 && xdotool set_desktop --relative -- -1");
+/*
+$ xdotool getwindowpid
+$ xdotool getwindowname 56623117
+win7_dev [Running] - Oracle VM VirtualBox
+*/
 
 int key_event(struct input_event *ev) {
 
@@ -41,20 +53,21 @@ int key_event(struct input_event *ev) {
 			st_ctrl = ev->value; break;
 		case KEY_ALT:
 			st_alt  = ev->value; break;
+
 		case KEY_LEFT:
 			if(st_alt & st_ctrl){
-				printf("\e[033m key-combine: ctrl+alt+left! \e[0m\n");
-				// system("xdotool key --window 0 'ctrl+alt+Left'");
-				// system("xdotool set_desktop 1");
-				// system("xdotool set_desktop --relative -- -1");
-				// system("[ \"`xdotool get_desktop`\" == 2 ] && xdotool set_desktop --relative -- -1");
-				// system("/usr/bin/test \"`xdotool get_desktop`\" == 2 && xdotool set_desktop --relative -- -1");
-				system(cmd);
-				/*
-				$ xdotool getwindowpid
-				$ xdotool getwindowname 56623117
-				win7_dev [Running] - Oracle VM VirtualBox
-				*/
+				if(ev->value){
+					printf("\e[033m key-combine: ctrl+alt+left! \e[0m\n");
+					system(cmd_l);
+				}
+			}
+			break;
+		case KEY_RIGHT:
+			if(st_alt & st_ctrl){
+				if(ev->value){
+					printf("\e[033m key-combine: ctrl+alt+right! \e[0m\n");
+					system(cmd_r);
+				}
 			}
 			break;
 	}
@@ -77,7 +90,8 @@ int main(int argc, char *argv[])
 	printf("   device: %s\n", dev);
 	printf("workspace: %s\n", num);
 	printf("\n");
-	snprintf(cmd, 255, "/usr/bin/test \"`xdotool get_desktop`\" == %s && xdotool set_desktop --relative -- -1", num);
+	snprintf(cmd_l, 255, "/usr/bin/test \"`xdotool get_desktop`\" == %s && xdotool set_desktop --relative -- -1", num);
+	snprintf(cmd_r, 255, "/usr/bin/test \"`xdotool get_desktop`\" == %s && xdotool set_desktop --relative --  1", num);
 
 
 
