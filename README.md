@@ -10,7 +10,7 @@ on ubuntu
 this daemon tool, as one workaround:
 
 - detect keyevent, then:
-  - run cmd to switch workspace
+  - run cmd to switch workspace // depend `xdotool`
 
 ref:
 https://superuser.com/questions/108785/getting-host-to-capture-certain-key-presses-in-virtualbox/1611071
