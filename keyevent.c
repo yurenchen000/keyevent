@@ -6,6 +6,7 @@
 #include <fcntl.h>
 
 #include <stdint.h>
+#include <string.h>
 
 char key[5]={0};
 char *cmd[5]={0};
@@ -57,12 +58,31 @@ int key_event(int keycode){
 
 int main(int argc, char *argv[])
 {
+	char *dev = "/dev/input/event3";
+	char *num = "3";
+
+	if(argc>1 && strcmp(argv[1],"-h") == 0) {
+		printf("usage: %s [dev_path] [workspace_num]\n\n", argv[0]);
+		exit(2);
+	}
+	if(argc>1) dev = argv[1];
+	if(argc>2) num = argv[2];
+	
+	printf("   device: %s\n", dev);
+	printf("workspace: %s\n", num);
+	printf("\n");
+
+	char cmd[256];
+	snprintf(cmd, 255, "/usr/bin/test \"`xdotool get_desktop`\" == %s && xdotool set_desktop --relative -- -1", num);
+
+
+
 	int fd = -1;
 	size_t rb;
 
 	struct input_event ev;
 
-	if ((fd = open("/dev/input/event3", O_RDONLY)) < 0) {
+	if ((fd = open(dev, O_RDONLY)) < 0) {
 		perror("open error");
 		exit(1);
 	}
@@ -100,7 +120,8 @@ int main(int argc, char *argv[])
 						// system("xdotool set_desktop 1");
 						// system("xdotool set_desktop --relative -- -1");
 						// system("[ \"`xdotool get_desktop`\" == 2 ] && xdotool set_desktop --relative -- -1");
-						system("/usr/bin/test \"`xdotool get_desktop`\" == 2 && xdotool set_desktop --relative -- -1");
+						// system("/usr/bin/test \"`xdotool get_desktop`\" == 2 && xdotool set_desktop --relative -- -1");
+						system(cmd);
 /*
 getwindowpid
 $ xdotool getwindowname 56623117
