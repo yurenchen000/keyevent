@@ -91,9 +91,10 @@ int main(int argc, char *argv[])
 	printf("   device: %s\n", dev);
 	printf("workspace: %s\n", num);
 	printf("\n");
-	snprintf(cmd_l, 255, "/usr/bin/test \"`xdotool get_desktop`\" == %s && xdotool set_desktop --relative -- -1", num);
-	snprintf(cmd_r, 255, "/usr/bin/test \"`xdotool get_desktop`\" == %s && xdotool set_desktop --relative --  1", num);
-
+	// snprintf(cmd_l, 255, "/usr/bin/test \"`xdotool get_desktop`\" == %s && xdotool set_desktop --relative -- -1", num);
+	// snprintf(cmd_r, 255, "/usr/bin/test \"`xdotool get_desktop`\" == %s && xdotool set_desktop --relative --  1", num);
+	snprintf(cmd_l, 255, "c=`xdotool get_desktop`; /usr/bin/test $c == %s -a $c -gt 0 && xdotool set_desktop --relative -- -1", num);
+	snprintf(cmd_r, 255, "c=`xdotool get_desktop`; /usr/bin/test $c == %s -a $((c+1)) -lt `xdotool get_num_desktops` &&  xdotool set_desktop --relative --  1", num);
 
 
 	//---main
