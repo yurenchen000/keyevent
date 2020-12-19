@@ -80,22 +80,28 @@ int main(int argc, char *argv[])
 	//---args
 	char *dev = "/dev/input/event3";
 	char *num = "2";
+	char *lop = "";
 
 	if(argc>1 && strcmp(argv[1],"-h") == 0) {
-		printf("usage: %s [dev_path] [workspace_num]\n\n", argv[0]);
+		printf("usage: %s [dev_path] [workspace_num] [loop]\n\n", argv[0]);
 		exit(2);
 	}
 	if(argc>1) dev = argv[1];
 	if(argc>2) num = argv[2];
+	if(argc>3) lop = argv[3];
+
 
 	printf("   device: %s\n", dev);
 	printf("workspace: %s\n", num);
+	printf(" loopback: %s\n", lop);
 	printf("\n");
-	// snprintf(cmd_l, 255, "/usr/bin/test \"`xdotool get_desktop`\" == %s && xdotool set_desktop --relative -- -1", num);
-	// snprintf(cmd_r, 255, "/usr/bin/test \"`xdotool get_desktop`\" == %s && xdotool set_desktop --relative --  1", num);
-	snprintf(cmd_l, 255, "c=`xdotool get_desktop`; /usr/bin/test $c == %s -a $c -gt 0 && xdotool set_desktop --relative -- -1", num);
-	snprintf(cmd_r, 255, "c=`xdotool get_desktop`; /usr/bin/test $c == %s -a $((c+1)) -lt `xdotool get_num_desktops` &&  xdotool set_desktop --relative --  1", num);
-
+	if(strcmp(lop, "loop") == 0){
+		snprintf(cmd_l, 255, "/usr/bin/test \"`xdotool get_desktop`\" == %s && xdotool set_desktop --relative -- -1", num);
+		snprintf(cmd_r, 255, "/usr/bin/test \"`xdotool get_desktop`\" == %s && xdotool set_desktop --relative --  1", num);
+	}else{
+		snprintf(cmd_l, 255, "c=`xdotool get_desktop`; /usr/bin/test $c == %s %s && xdotool set_desktop --relative -- -1", num, "-a $c -gt 0");
+		snprintf(cmd_r, 255, "c=`xdotool get_desktop`; /usr/bin/test $c == %s %s && xdotool set_desktop --relative --  1", num, "-a $((c+1)) -lt `xdotool get_num_desktops`");
+	}
 
 	//---main
 	int fd = -1;
