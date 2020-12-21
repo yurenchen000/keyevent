@@ -44,6 +44,9 @@ char cmd_r[256];
 $ xdotool getwindowpid
 $ xdotool getwindowname 56623117
 win7_dev [Running] - Oracle VM VirtualBox
+
+xprop -id `xdotool search --name 'VM VirtualBox$'` -notype -f WM_CLASS 8s ' $0\n' WM_CLASS
+xprop -id `xdotool getwindowfocus` -notype -f WM_CLASS 8s ' $0\n' WM_CLASS
 */
 
 int key_event(struct input_event *ev) {
@@ -99,9 +102,12 @@ int main(int argc, char *argv[])
 		snprintf(cmd_l, 255, "/usr/bin/test \"`xdotool get_desktop`\" == %s && xdotool set_desktop --relative -- -1", num);
 		snprintf(cmd_r, 255, "/usr/bin/test \"`xdotool get_desktop`\" == %s && xdotool set_desktop --relative --  1", num);
 	}else{
-		snprintf(cmd_l, 255, "c=`xdotool get_desktop`; /usr/bin/test $c == %s %s && xdotool set_desktop --relative -- -1", num, "-a $c -gt 0");
-		snprintf(cmd_r, 255, "c=`xdotool get_desktop`; /usr/bin/test $c == %s %s && xdotool set_desktop --relative --  1", num, "-a $((c+1)) -lt `xdotool get_num_desktops`");
+		const char *cond = "xdotool getwindowfocus getwindowname | grep --color -- ' - Oracle VM VirtualBox$' && ";
+		snprintf(cmd_l, 255, "%s c=`xdotool get_desktop` && xdotool set_desktop -- $((c-1))", cond);
+		snprintf(cmd_r, 255, "%s c=`xdotool get_desktop` && xdotool set_desktop -- $((c+1))", cond);
 	}
+	printf("cmd_l: %s\n", cmd_l);
+	printf("cmd_r: %s\n", cmd_r);
 
 	//---main
 	int fd = -1;
