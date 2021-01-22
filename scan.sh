@@ -3,10 +3,13 @@
 # need root
 [ "`id -u`" != "0" ] && { echo "need run as root"; exit; }
 
+# tty color
+[ -t 1 ] && y=$'\e[33m' && c=$'\e[0m'
+
 # scan input
 for f in /dev/input/event*; do 
 	# evtest $f &
-	evtest $f | awk -vf=$f '{print f" :"$0}' &
+	evtest $f | awk -vf=$y$f$c '{print f" :"$0}' &
 	echo $f;
 done
 
