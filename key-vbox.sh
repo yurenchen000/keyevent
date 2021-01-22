@@ -16,7 +16,7 @@ start(){
 
 	stat && return
 	sudo id && {
-		sudo nohup $dir/keyevent &>/dev/null &
+		sudo nohup $dir/keyevent $INPUT &>/dev/null &
 		echo "running at bg..."
 	}
 }
