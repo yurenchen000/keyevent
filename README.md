@@ -15,7 +15,7 @@ this daemon tool, as one workaround:
 ref:
 https://superuser.com/questions/108785/getting-host-to-capture-certain-key-presses-in-virtualbox/1611071
 
-## choice eventX
+## 1. choice eventX
 ls -lh /dev/input/event*
 
 //a. use `evtest`
@@ -26,5 +26,21 @@ sudo evtest
 //b. use `xinput`
 ```sh
 xinput list
-sudo xinput test 17
+sudo xinput test 18
+```
+// assume input device is `/dev/input/event18`
+
+## 2. run keyevent
+
+```sh
+sudo ./keyevent /dev/input/event18
+```
+
+## 3. run background
+```sh
+# start
+INPUT=/dev/input/event18 ./key-vbox.sh start
+
+# stop
+key-vbox.sh start
 ```
