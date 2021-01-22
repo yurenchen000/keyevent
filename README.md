@@ -23,13 +23,19 @@ ls -lh /dev/input/event*
 sudo evtest
 ```
 
-~~//b. use `xinput`~~ //it has different device num, not need root
+~~//b. use `xinput`~~ // it has different device num , not need root (through x input)
 ```sh
 xinput list 
 # not need root
 xinput test 18
 ```
+//b. use `scan.sh`
 
+a script to scan all event*
+```sh
+sudo ./scan.sh
+```
+`Ctrl+C` or `Enter` to exit.
 
 // assume input device is `/dev/input/event18`
 
