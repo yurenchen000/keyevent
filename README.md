@@ -51,5 +51,5 @@ sudo ./keyevent /dev/input/event18
 INPUT=/dev/input/event18 ./key-vbox.sh start
 
 # stop
-key-vbox.sh start
+key-vbox.sh stop
 ```
