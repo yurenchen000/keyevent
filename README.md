@@ -23,11 +23,14 @@ ls -lh /dev/input/event*
 sudo evtest
 ```
 
-//b. use `xinput`
+~~//b. use `xinput`~~ //it has different device num, not need root
 ```sh
-xinput list
-sudo xinput test 18
+xinput list 
+# not need root
+xinput test 18
 ```
+
+
 // assume input device is `/dev/input/event18`
 
 ## 2. run keyevent
