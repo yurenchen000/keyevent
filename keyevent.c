@@ -129,6 +129,10 @@ int main(int argc, char *argv[])
 
 	while(1) {
 		rb = read(fd, &ev, sizeof(struct input_event));
+		if (rb < 0) {
+			perror("read err, exit");
+			exit(2);
+		}
 		if (rb < sizeof(struct input_event)) {
 			perror("read error");
 			exit(1);
