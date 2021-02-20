@@ -53,3 +53,17 @@ INPUT=/dev/input/event18 ./key-vbox.sh start
 # stop
 key-vbox.sh stop
 ```
+
+----
+
+## note: get key event on ubuntu
+
+ Get key event on host ubuntu at low-level  
+   // use tools such as `showkey`, `evtest`, or `getevent`
+
+ - `evtest`, `getevent` (should specify input device),  
+    // depend on **/dev/input/eventX**, need root
+ - `showkey` not depend on input device (all keyboard are same),  
+    // depend on **/dev/console**, need root
+ - `xinput test` (should specify device, not same with /dev/input/eventX)  
+    // depend on **X system**, not need root
