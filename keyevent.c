@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
 
 	//---main
 	int fd = -1;
-	size_t rb;
+	ssize_t rb;
 
 	struct input_event ev;
 
@@ -129,6 +129,7 @@ int main(int argc, char *argv[])
 
 	while(1) {
 		rb = read(fd, &ev, sizeof(struct input_event));
+		// read(3, 0x7ffe5ed4a5d0, 24)             = -1 ENODEV (No such device)
 		if (rb < 0) {
 			perror("read err, exit");
 			exit(2);
