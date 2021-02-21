@@ -22,6 +22,75 @@ this code based on `kbd` package, showkey.c
 #include <libintl.h>
 
 
+//------------------------ keyevent
+#include <linux/input.h>
+
+#define KEY_CTRL 29
+#define KEY_ALT  56
+#define KEY_LEFT  105
+#define KEY_RIGHT 106
+
+// #define K_REPT 2
+// #define K_DOWN 1
+// #define K_UP   0
+
+int st_ctrl = 0;
+int st_alt  = 0;
+char cmd_l[256];
+char cmd_r[256];
+
+void init_cmd(){
+	const char *cond = "xdotool getwindowfocus getwindowname | grep --color -- ' - Oracle VM VirtualBox$' && ";
+	snprintf(cmd_l, 255, "%s c=`xdotool get_desktop` && xdotool set_desktop -- $((c-1))", cond);
+	snprintf(cmd_r, 255, "%s c=`xdotool get_desktop` && xdotool set_desktop -- $((c+1))", cond);
+	printf("cmd_l: %s\n", cmd_l);
+	printf("cmd_r: %s\n", cmd_r);
+}
+
+int key_event(struct input_event *ev) {
+
+	switch(ev->code){
+		case KEY_CTRL:
+			st_ctrl = ev->value; break;
+		case KEY_ALT:
+			st_alt  = ev->value; break;
+
+		case KEY_LEFT:
+			if(st_alt & st_ctrl){
+				if(ev->value){
+					printf("\e[033m key-combine: ctrl+alt+left! \e[0m\n");
+					system(cmd_l);
+				}
+			}
+			break;
+		case KEY_RIGHT:
+			if(st_alt & st_ctrl){
+				if(ev->value){
+					printf("\e[033m key-combine: ctrl+alt+right! \e[0m\n");
+					system(cmd_r);
+				}
+			}
+			break;
+	}
+	return 0;
+}
+
+/*
+struct input_event {
+    struct timeval time;
+    __u16 type;
+    __u16 code;
+    __s32 value;
+};
+*/
+struct input_event ev;
+void key_process(int code, int  val){
+	ev.code = code;
+	ev.value = val;
+	key_event(&ev);
+}
+
+
 //------------------------ vars
 
 int fd;
@@ -265,6 +334,7 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE_NAME, LOCALEDIR);
 	textdomain(PACKAGE_NAME);
 
+	init_cmd();
 	//------------------------
 
 	if ((fd = getfd(NULL)) < 0)
@@ -294,7 +364,7 @@ int main(int argc, char *argv[])
 #ifdef SIGSTKFLT
 	signal(SIGSTKFLT, die);
 #endif
-	signal(SIGCHLD, die);
+	// signal(SIGCHLD, die); sig 17
 	signal(SIGCONT, die);
 	signal(SIGSTOP, die);
 	signal(SIGTSTP, die);
@@ -318,7 +388,7 @@ int main(int argc, char *argv[])
 		kbd_error(EXIT_FAILURE, errno, "ioctl KDSKBMODE");
 	}
 
-	printf(_("press any key (program terminates 10s after last keypress)...\n"));
+	// printf(_("press any key (program terminates 10s after last keypress)...\n"));
 
 
 	//------------------------
@@ -326,15 +396,16 @@ int main(int argc, char *argv[])
 
 
 	/* show keycodes - 2.6 allows 3-byte reports */
+	// has repeat keys
 	while (1) {
-		alarm(10);
+		// alarm(10);
 		n = read(fd, buf, sizeof(buf));
 		i = 0;
 		while (i < n) {
 			int kc;
 			char *s;
 
-			s = (buf[i] & 0x80) ? _("release") : _("press");
+			s = (buf[i] & 0x80) ? _("up") : _("down");
 
 			if (i + 2 < n && (buf[i] & 0x7f) == 0 && (buf[i + 1] & 0x80) != 0 && (buf[i + 2] & 0x80) != 0) {
 				kc = ((buf[i + 1] & 0x7f) << 7) |
@@ -344,7 +415,10 @@ int main(int argc, char *argv[])
 				kc = (buf[i] & 0x7f);
 				i++;
 			}
-			printf(_("\rkeycode %3d %s\n"), kc, s);
+			printf(_("\rkey %3d  %s\n"), kc, s);
+
+			int key_down = !(buf[i] & 0x80);
+			key_process(kc, key_down);
 		}
 	}
 
