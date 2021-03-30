@@ -54,6 +54,11 @@ INPUT=/dev/input/event18 ./key-vbox.sh start
 key-vbox.sh stop
 ```
 
+## X. use scan_run.sh
+
+this script do step `1.` & `3.` works in one step automatically.
+
+
 ----
 
 ## note: get key event on ubuntu
