@@ -6,10 +6,11 @@
 # tty color
 [ -t 1 ] && y=$'\e[33m' && c=$'\e[0m'
 
+dir=`dirname $(readlink -f $BASH_SOURCE)`
 # scan input
 for f in /dev/input/event*; do 
 	# evtest $f &
-	evtest $f | awk -vf=$f -vy=$y -vc=$c ' $1=="Event:" && $0 ~/KEY_ENTER/ {print y f c": "$0; cmd="INPUT="f" ./key-vbox.sh "; print("== RUN daemon: "cmd); system(cmd)}' &
+	evtest $f | awk -vf=$f -vy=$y -vc=$c -vd=$dir ' $1=="Event:" && $0 ~/KEY_ENTER/ {print y f c": "$0; cmd="INPUT="f" "d"/key-vbox.sh "; print("== RUN daemon: "cmd); system(cmd)}' &
 	echo $f;
 done
 
@@ -25,4 +26,5 @@ echo '== EXIT scan'
 pkill -ef '^evtest /dev/input/event'
 echo
 echo '== background running'
-./key-vbox.sh stat
+$dir/key-vbox.sh stat
+
